@@ -6,8 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
-
-
   },
   "author": "Pablo Arceo",
   "license": "ISC",
@@ -20,7 +18,7 @@
     "jwt-simple": "^0.5.6",
     "modules": "^0.4.0",
     "moment": "^2.29.1",
-    "mongoose": "^5.11.18",
+    "mongoose": "^5.11.15",
     "node": "^15.10.0",
     "nodemon": "^2.0.7"
   },

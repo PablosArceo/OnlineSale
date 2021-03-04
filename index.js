@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt-nodejs');
 
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/ControlDeEmpresasDB',{ useNewUrlParser: true, useUnifiedTopology: true }).then(()=>{
+mongoose.connect('mongodb://localhost:27017/ProyectoFinal',{ useNewUrlParser: true, useUnifiedTopology: true }).then(()=>{
    
 
     var user1 = 'Admin';

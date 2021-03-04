@@ -13,6 +13,6 @@ app.use(bodyParser.json())
 
 app.use(cors());
 
-app.use('/api' , usuario_ruta);
+app.use('/api',usuario_ruta);
 
 module.exports = app;
