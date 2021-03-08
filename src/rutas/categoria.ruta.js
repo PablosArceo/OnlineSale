@@ -10,7 +10,8 @@ const api = express.Router();
 api.post('/registrarCategoria',md_autentication.ensureAuth,categoriaControlador.registrarCategoria);
 api.put('/editarCategoria/:idCategoria',md_autentication.ensureAuth,categoriaControlador.editarCategoria);
 api.get('/listarCategorias',md_autentication.ensureAuth,categoriaControlador.listarCategorias);
-// api.delete('/eliminarCategoria/:idCategoria', md_autentication.ensureAuth,categoriaControlador.eliminarCategoria);
+api.get('/listaCategoriaid/:idCategoria',md_autentication.ensureAuth,categoriaControlador.listaCategoriaId);
+api.delete('/eliminarCategoria/:idCategoria', md_autentication.ensureAuth,categoriaControlador.eliminarCategoria);
 
 
 module.exports = api;
