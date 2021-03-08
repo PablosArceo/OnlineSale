@@ -115,7 +115,7 @@ if (params.user && params. password){
         
 
 
-                                              // =====  FUNCIONES DE ADMINISTRADOR ==== // 
+                                            //=== Funciones De Administrador ===\\ 
 
      /// Agregar Clientes y Administradores -- Unicamente Para Administradores --
     function registrarNuevoUsuario(req,res) {
@@ -153,7 +153,6 @@ if (params.user && params. password){
 
              }
          }           
-
            
         })    
     
@@ -161,19 +160,6 @@ if (params.user && params. password){
      return res.status(500).send({mensaje:'Ingrese todos los datos para crear un nuevo usuario'});
     }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
