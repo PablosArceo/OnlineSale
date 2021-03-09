@@ -144,6 +144,25 @@ function eliminarProducto(req, res){
 }
 
 
+function productosAgotados(req,res){
+    Producto.find({ stock: 0}, (err,ProductosEncontrados)=>{
+        if(err){
+          return  res.status(500).send({mensaje : 'Error en la peticion'});
+        } else if (ProductosEncontrados){
+            
+            if(ProductosEncontrados.length > 0){
+                return res.send({mensaje:'Productos agotados','productos': ProductosEncontrados});
+            } else {
+                res.send({mensaje : 'Por el momento no hay productos agotados.'});
+            }
+        } else {
+            return res.status(404).send({mensaje : 'Error no hay productos que mostrar.'});
+        }   
+    })
+}
+
+
+
 
 
 
@@ -153,5 +172,6 @@ listaProductos,
 listaProductosId,
 editarProducto,
 eliminarProducto,
+productosAgotados
 
 }
