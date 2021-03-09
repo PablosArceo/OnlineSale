@@ -120,11 +120,22 @@ function eliminarCategoria(req, res){
     });
 }
 
+function listaNombreCategorias(req, res){
+    var nombreCategoria = req.params.nombreCategoria;
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden eliminar Categorias'})
+    Categoria.find({ 'nombreCategoria': nombreCategoria}, (err, CategoriaEncontrada) => {
+        if (err) return res.status(500).send({ mensaje: "Error en peticion" });
+        if (!CategoriaEncontrada) return res.status(500).send({ mensaje: "Error en la busqueda de nombre" });
+        return res.status(200).send({ CategoriaEncontrada });
+    })
+}
+
 
 module.exports={
     registrarCategoria,
     editarCategoria,
     listarCategorias,
     listaCategoriaId,
-    eliminarCategoria
+    eliminarCategoria,
+    listaNombreCategorias
 }

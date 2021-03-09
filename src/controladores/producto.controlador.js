@@ -86,9 +86,6 @@ function editarProducto(req, res){
 
 
 
-
-
-
 // Lista los Productos
 function listaProductos(req,res) {
     if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden listar Productos'})
@@ -108,10 +105,33 @@ function listaProductosId(req, res){
 
     Producto.find({ '_id': idProducto}, (err, ProductoEncontrado) => {
         if (err) return res.status(500).send({ mensaje: "Error en peticion" });
+        if (!ProductoEncontrado) return res.status(500).send({ mensaje: "Error en la busqueda de Id de Productos" });
+        return res.status(200).send({ ProductoEncontrado });
+    })
+}
+
+// Lista Por Nombre de Productos
+function listaNombreProducto(req, res){
+    var nombreProducto = req.params.nombreProducto;
+
+    Producto.find({ 'nombreProducto': nombreProducto}, (err, ProductoEncontrado) => {
+        if (err) return res.status(500).send({ mensaje: "Error en peticion" });
         if (!ProductoEncontrado) return res.status(500).send({ mensaje: "Error en la busqueda de nombre" });
         return res.status(200).send({ ProductoEncontrado });
     })
 }
+
+
+function listaNombreCategorias(req, res){
+    var nombreCategoria = req.params.nombreCategoria;
+
+    Categoria.find({ 'nombreCategoria': nombreCategoria}, (err, CategoriaEncontrada) => {
+        if (err) return res.status(500).send({ mensaje: "Error en peticion" });
+        if (!CategoriaEncontrada) return res.status(500).send({ mensaje: "Error en la busqueda de nombre" });
+        return res.status(200).send({ CategoriaEncontrada });
+    })
+}
+
 
 
 // Eliminar Producto
@@ -143,7 +163,7 @@ function eliminarProducto(req, res){
     });
 }
 
-
+// Productos agotados.
 function productosAgotados(req,res){
     Producto.find({ stock: 0}, (err,ProductosEncontrados)=>{
         if(err){
@@ -161,6 +181,19 @@ function productosAgotados(req,res){
     })
 }
 
+// Productos Más vendidos
+function productosMasDemanda(req,res){
+
+    Producto.find({ventas: {$gt: 0}},(err,ProductosMasVendidos)=>{
+        if(err){
+            res.status(500).send({mensaje : 'Error general en el servidor'});
+        } else if (ProductosMasVendidos){
+            res.send({ProductosMasVendidos});
+        } else {
+            res.status(404).send({ mensaje : 'No hay productos que mostrar.'});
+        }
+    }).sort({ventas:-1}).limit(10);
+}
 
 
 
@@ -172,6 +205,9 @@ listaProductos,
 listaProductosId,
 editarProducto,
 eliminarProducto,
-productosAgotados
+listaNombreProducto,
+productosAgotados,
+productosMasDemanda,
+listaNombreCategorias
 
 }

@@ -22,5 +22,6 @@ api.put('/editarRoles/:idUser', md_autentication.ensureAuth,usuarioControlador.e
 api.post('/registrarCliente',usuarioControlador.registrarCliente );
 api.put('/editarCliente',md_autentication.ensureAuth, usuarioControlador.editarCliente);
 api.delete('/eliminarCliente',md_autentication.ensureAuth,usuarioControlador.eliminarCliente);
+api.put('/agregarAlCarrito/:idUser/:idProducto',md_autentication.ensureAuth, usuarioControlador.agregarAlCarrito);
 
 module.exports = api;
