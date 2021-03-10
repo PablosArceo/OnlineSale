@@ -23,5 +23,7 @@ api.post('/registrarCliente',usuarioControlador.registrarCliente );
 api.put('/editarCliente',md_autentication.ensureAuth, usuarioControlador.editarCliente);
 api.delete('/eliminarCliente',md_autentication.ensureAuth,usuarioControlador.eliminarCliente);
 api.put('/agregarAlCarrito/:idUser/:idProducto',md_autentication.ensureAuth, usuarioControlador.agregarAlCarrito);
+api.get('/listaFacturaId/:idUser',md_autentication.ensureAuth, usuarioControlador.listaFacturaId);
+api.get('/detallesFactura/:idUser/:idFactura', md_autentication.ensureAuth,usuarioControlador.detallesFactura);
 
 module.exports = api;

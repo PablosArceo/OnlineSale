@@ -4,6 +4,7 @@ const bcrypt  = require('bcrypt-nodejs');
 const jwt = require('../servicios/jwt');
 const Usuario = require('../modelos/usuario.model');
 const Producto = require('../modelos/producto.model');
+const Factura = require ('../modelos/factura.model');
 const { param } = require('../rutas/usuario.rutas');
 
 
@@ -85,17 +86,17 @@ if (params.user && params. password){
 
     
     // Editar Perfil De Cliente
-        function editarCliente(req, res) {
-             var params = req.body;
+    function editarCliente(req, res) {
+    var params = req.body;
              
-             if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje:'Solo clientes pueden modificar sus datos'})
+    if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje:'Solo clientes pueden modificar sus datos'})
              
             
-              Usuario.findByIdAndUpdate(req.user.sub, params, { new: true }, (err, ClienteActualizado)=>{ 
-               if(err) return status(500).send({mensaje: 'Error en la peticion'});
-               if(!ClienteActualizado) return res.status(500).send({ mensaje: 'No se ha podido actualizar el cliente'})
+        Usuario.findByIdAndUpdate(req.user.sub, params, { new: true }, (err, ClienteActualizado)=>{ 
+        if(err) return status(500).send({mensaje: 'Error en la peticion'});
+        if(!ClienteActualizado) return res.status(500).send({ mensaje: 'No se ha podido actualizar el cliente'})
   
-              return res.status(200).send({ ClienteActualizado });
+        return res.status(200).send({ ClienteActualizado });
 
               } )
             }
@@ -103,25 +104,25 @@ if (params.user && params. password){
     // Eliminar Perfil Para Clientes
 
    function eliminarCliente(req, res) {
-             var params = req.body;
+    var params = req.body;
              
-             if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje:'Solo clientes pueden borrar su perfil'})
+    if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje:'Solo clientes pueden borrar su perfil'})
              
-             Usuario.findByIdAndDelete(req.user.sub, (err, ClienteEliminado)=>{
-                if(err) return res.status(500).send({ mensaje: 'Error en la peticion de Eliminar'});
-                if(!ClienteEliminado) return res.status(500).send({mensaje: 'Cliente eliminado con anterioridad'});
+         Usuario.findByIdAndDelete(req.user.sub, (err, ClienteEliminado)=>{
+         if(err) return res.status(500).send({ mensaje: 'Error en la peticion de Eliminar'});
+         if(!ClienteEliminado) return res.status(500).send({mensaje: 'Cliente eliminado con anterioridad'});
            
-                return res.status(200).send({ ClienteEliminado});
+         return res.status(200).send({ ClienteEliminado});
             })
             }
         
         // Agregar Productos al Carrito
-        function agregarAlCarrito(req, res){
-        var idUser = req.params.idUser;
-        var idProducto = req.params.idProducto;
-        var params = req.body;
+    function agregarAlCarrito(req, res){
+    var idUser = req.params.idUser;
+    var idProducto = req.params.idProducto;
+    var params = req.body;
 
-        if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje: 'Funcion disponible para clientes'})
+    if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje: 'Funcion disponible para clientes'})
 
         if(params.stock){
         Usuario.findOne({'_id': idUser, 'carrito._id':idProducto}, (err, UsuarioEncontrado)=>{
@@ -159,6 +160,57 @@ if (params.user && params. password){
         res.send({message:'Ingresa la cantidad del producto que desea añadir a su carrito.'});
        }
    }
+
+
+   // Factura Detallada por Cliente
+    function detallesFactura(req, res){
+    var idFactura = req.params.idFactura;
+    var idUser = req.params.idUser;
+
+    if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje: 'Funcion disponible para clientes'})
+
+    
+        Usuario.findOne({'_id':idUser, 'facturas':idFactura}, (err, UsuarioEncontrado)=>{
+            if(err){ return  res.status(500).send({mensaje : 'Error en la peticion'});
+            }else if(UsuarioEncontrado){
+            Factura.findOne({'_id':idFactura}, (err, FacturaEncontrada) =>{
+                    if(err){
+                        return  res.status(500).send({mensaje : 'Error en la peticion'})
+                    }else if(FacturaEncontrada){
+                      return  res.send({FacturaEncontrada});
+                    }else{
+                        res.send({mensaje:'Factura no encontrada'});
+                    }
+                });
+            }else{
+            return res.status(404).send({mensaje:'La factura no se ha encontrado en el registro.'});
+            }
+        });
+    }
+
+   
+
+
+
+
+    // Obtener Id Factura Por Cliente 
+    function listaFacturaId(req, res){
+    var idUser = req.params.idUser;
+
+
+
+    Usuario.findById({_id: idUser,rol:'ROL_CLIENTE'}, (err,UsuarioEncontrado)=>{
+     
+        if(err){ return  res.status(500).send({mensaje : 'Error en la petición'});
+        } else if (UsuarioEncontrado){
+            if(UsuarioEncontrado.facturas.length > 0){
+               return res.send({Facturas: UsuarioEncontrado.facturas});
+            } else {  return  res.send({ mensaje : 'El cliente no posee facturas a su nombre.'});
+            }
+        } else { return  res.status(404).send({ mensaje : 'Error en la busqueda de registros'});
+        }
+    });
+}
 
 
    
@@ -277,7 +329,9 @@ eliminarCliente,
 editarUser,
 eliminarUser,
 editarRoles,
-agregarAlCarrito
+agregarAlCarrito,
+listaFacturaId,
+detallesFactura
 
 
     }

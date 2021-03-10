@@ -141,6 +141,39 @@ function eliminarProducto(req, res){
         }
     });
 }
+// Productos Más vendidos
+function productosMasVendidos(req,res){
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Inicia Sesion Como Admin Para ver Productos Mas Vendidos'})
+
+
+    Producto.find({ventas: {$gt: 0}},(err,ProductosMasVendidos)=>{
+        if(err){ return  res.status(500).send({mensaje : 'Error general en el servidor'});
+        } else if (ProductosMasVendidos){ return res.send({ProductosMasVendidos});
+        } else { return res.status(404).send({ mensaje : 'No hay productos que mostrar.'});
+        }
+    }).sort({ventas:-1}).limit(10);
+}
+
+// Productos Agotados
+function AgotadoProducto(req,res){
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Inicia Sesion Como Admin Para Verificar si Hay productos Agotados'})
+
+    Producto.find({ stock: 0}, (err,ProductosAgotados)=>{
+        if(err){  return  res.status(500).send({mensaje : 'Error en la peticion'});
+        } else if (ProductosAgotados){
+            if(ProductosAgotados.length > 0){ return res.send({ProductosAgotados});
+            } else {  res.send({mensaje : 'Por el momento no hay productos agotados.'});
+            }
+        } else {
+            return res.status(404).send({mensaje : 'Error no hay productos que mostrar.'});
+        }   
+    })
+}
+
+
+
+
+
 
 
 
@@ -217,8 +250,12 @@ listaProductosId,
 editarProducto,
 eliminarProducto,
 listaNombreProducto,
+productosMasVendidos,
+AgotadoProducto,
 productosAgotados,
 productosMasDemanda,
-listaCatalogoCategoria
+listaCatalogoCategoria,
+
+
 
 }
