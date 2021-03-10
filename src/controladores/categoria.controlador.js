@@ -44,7 +44,7 @@ function editarCategoria(req, res){
     var idCategoria = req.params.idCategoria;
     var params = req.body;
 
-    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden editart Categorias'})
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden editar Categorias'})
     
        
        delete params.password;

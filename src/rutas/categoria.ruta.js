@@ -11,7 +11,7 @@ api.post('/registrarCategoria',md_autentication.ensureAuth,categoriaControlador.
 api.put('/editarCategoria/:idCategoria',md_autentication.ensureAuth,categoriaControlador.editarCategoria);
 api.get('/listarCategorias',md_autentication.ensureAuth,categoriaControlador.listarCategorias);
 api.get('/listaCategoriaid/:idCategoria',md_autentication.ensureAuth,categoriaControlador.listaCategoriaId);
-api.get('/listaCategoriaid/:nombreCategoria',md_autentication.ensureAuth,categoriaControlador.listaNombreCategorias);
+api.get('/listaNombreCategorias/:nombreCategoria',md_autentication.ensureAuth,categoriaControlador.listaNombreCategorias);
 
 api.delete('/eliminarCategoria/:idCategoria', md_autentication.ensureAuth,categoriaControlador.eliminarCategoria);
 

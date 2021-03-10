@@ -37,6 +37,7 @@ function login(req, res){
     })
     }
 
+                     //                              /  === Funciones de Cliente ===  \
 
     
    // Registrarse Como Cliente Nuevo
@@ -52,7 +53,7 @@ if (params.user && params. password){
     Usuario.find({user:usuarioModel.user}).exec((err, usuarioEncontrado)=>{
     if(err) return res.status(500).send({mensaje: 'Error en la peticion del cliente'})
     if (usuarioEncontrado && usuarioEncontrado.length >=1 ){
-       return res.status(500).send({mensaje:'El Cliente ya Existe'})
+       return res.status(500).send({mensaje:'El Cliente Registrado Con Aterioridad'})
 
     }else{
         bcrypt.hash(params.password, null, null, (err, passwordEncriptada)=>{
@@ -114,6 +115,53 @@ if (params.user && params. password){
             })
             }
         
+        // Agregar Productos al Carrito
+        function agregarAlCarrito(req, res){
+        var idUser = req.params.idUser;
+        var idProducto = req.params.idProducto;
+        var params = req.body;
+
+        if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje: 'Funcion disponible para clientes'})
+
+        if(params.stock){
+        Usuario.findOne({'_id': idUser, 'carrito._id':idProducto}, (err, UsuarioEncontrado)=>{
+            if(err){
+               return res.status(500).send({mensaje:'Error en la peticion.'});
+            }else if(UsuarioEncontrado){
+                res.send({mensaje:'Producto ya añadido anteriormente.'});
+            }else{
+                Producto.findOne({'_id':idProducto},(err, ProductoEncontrado)=>{
+                    if(err){
+                     return   res.status(500).send({mensaje:'Error en la peticion.'});
+                    }else if(ProductoEncontrado){
+                        if(ProductoEncontrado.stock>=params.stock){
+                            ProductoEncontrado.stock = params.stock;
+            
+                            Usuario.findOneAndUpdate({'_id':idUser},
+                            {$push:{carrito:ProductoEncontrado}},{new:true},(err, UsuarioActualizado)=>{
+                                if(err){
+                                    res.status(500).send({mensaje:'Error en la peticion'});
+                                }else {(UsuarioEncontrado)}{
+                                    res.send({mensaje:'Producto Añadido a su Carrito.', carrito:UsuarioActualizado.carrito});
+                                }
+                            });
+                            }else{
+                                res.send({mensaje:'Error la cantidad supera la existencia de los productos.'});
+                            }
+                    }else{
+                        res.status(404).send({message:'Producto inexistente.'});
+                    }
+                });
+
+            }
+        });
+       }else{
+        res.send({message:'Ingresa la cantidad del producto que desea añadir a su carrito.'});
+       }
+   }
+
+
+   
 
 
                                             //=== Funciones De Administrador ===\\ 
@@ -216,51 +264,7 @@ if (params.user && params. password){
 
    }
 
-   // Agregar Productos al Carrito
-   function agregarAlCarrito(req, res){
-    var idUser = req.params.idUser;
-    var idProducto = req.params.idProducto;
-    var params = req.body;
-
-    if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje: 'Funcion disponible para clientes'})
-
-    if(params.stock){
-        Usuario.findOne({'_id': idUser, 'carrito._id':idProducto}, (err, UsuarioEncontrado)=>{
-            if(err){
-               return res.status(500).send({mensaje:'Error en la peticion.'});
-            }else if(UsuarioEncontrado){
-                res.send({mensaje:'Producto ya añadido anteriormente.'});
-            }else{
-                Producto.findOne({'_id':idProducto},(err, ProductoEncontrado)=>{
-                    if(err){
-                     return   res.status(500).send({mensaje:'Error en la peticion.'});
-                    }else if(ProductoEncontrado){
-                        if(ProductoEncontrado.stock>=params.stock){
-                            ProductoEncontrado.stock = params.stock;
-            
-                            Usuario.findOneAndUpdate({'_id':idUser},
-                            {$push:{carrito:ProductoEncontrado}},{new:true},(err, UsuarioActualizado)=>{
-                                if(err){
-                                    res.status(500).send({mensaje:'Error en la peticion'});
-                                }else {(UsuarioEncontrado)}{
-                                    res.send({mensaje:'Producto Añadido a su Carrito.', carrito:UsuarioActualizado.carrito});
-                                }
-                            });
-                            }else{
-                                res.send({mensaje:'Error la cantidad supera la existencia de los productos.'});
-                            }
-                    }else{
-                        res.status(404).send({message:'Producto inexistente.'});
-                    }
-                });
-
-            }
-        });
-       }else{
-        res.send({message:'Ingresa la cantidad del producto que desea.'});
-       }
-   }
-
+   
 
 
     

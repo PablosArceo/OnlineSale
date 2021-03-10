@@ -13,7 +13,7 @@ api.get('/listaProductosId/:idProducto',md_autentication.ensureAuth,productoCont
 api.put('/editarProducto/:idProducto', md_autentication.ensureAuth,productoControlador.editarProducto);
 api.delete('/eliminarProducto/:id', md_autentication.ensureAuth,productoControlador.eliminarProducto);
 api.get ('/listaNombreProducto/:nombreProducto',md_autentication.ensureAuth,productoControlador.listaNombreProducto);
-api.get ('/listaNombreCategorias/:nombreCategoria',md_autentication.ensureAuth,productoControlador.listaNombreCategorias);
+api.get ('/listaCatalogoCategoria/:idCategoria',md_autentication.ensureAuth,productoControlador.listaCatalogoCategoria);
 api.get('/productosAgotados', md_autentication.ensureAuth,productoControlador.productosAgotados);
 api.get('/productosMasDemanda', md_autentication.ensureAuth,productoControlador.productosMasDemanda);
 module.exports = api;

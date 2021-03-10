@@ -109,28 +109,7 @@ function listaProductosId(req, res){
         return res.status(200).send({ ProductoEncontrado });
     })
 }
-
-// Lista Por Nombre de Productos
-function listaNombreProducto(req, res){
-    var nombreProducto = req.params.nombreProducto;
-
-    Producto.find({ 'nombreProducto': nombreProducto}, (err, ProductoEncontrado) => {
-        if (err) return res.status(500).send({ mensaje: "Error en peticion" });
-        if (!ProductoEncontrado) return res.status(500).send({ mensaje: "Error en la busqueda de nombre" });
-        return res.status(200).send({ ProductoEncontrado });
-    })
-}
-
-
-function listaNombreCategorias(req, res){
-    var nombreCategoria = req.params.nombreCategoria;
-
-    Categoria.find({ 'nombreCategoria': nombreCategoria}, (err, CategoriaEncontrada) => {
-        if (err) return res.status(500).send({ mensaje: "Error en peticion" });
-        if (!CategoriaEncontrada) return res.status(500).send({ mensaje: "Error en la busqueda de nombre" });
-        return res.status(200).send({ CategoriaEncontrada });
-    })
-}
+               
 
 
 
@@ -163,15 +142,47 @@ function eliminarProducto(req, res){
     });
 }
 
+
+
+//                              /  === Funciones de Cliente ===  \
+
+// Lista Por Nombre de Productos
+function listaNombreProducto(req, res){
+    var nombreProducto = req.params.nombreProducto;
+    if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje:'Inicia Sesion Como Cliente para Buscar Productos por nombre'})
+
+    Producto.find({ 'nombreProducto': nombreProducto}, (err, ProductoEncontrado) => {
+        if (err) return res.status(500).send({ mensaje: "Error en peticion" });
+        if (!ProductoEncontrado) return res.status(500).send({ mensaje: "Error en la busqueda de nombre" });
+        return res.status(200).send({ ProductoEncontrado });
+    })
+}
+
+
+function listaCatalogoCategoria(req, res){
+    var idCategoria = req.params.idCategoria;
+
+    if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje:'Inicia Sesion Como Cliente para ver el Catalago De Categoria'})
+
+    Categoria.find({ '_id': idCategoria}, (err, CategoriaEncontrada) => {
+        if (err) return res.status(500).send({ mensaje: "Error en peticion" });
+        if (!CategoriaEncontrada) return res.status(500).send({ mensaje: "Error en la busqueda de Id de Catalogo De Categoria" });
+        return res.status(200).send({ CategoriaEncontrada });
+    })
+}
+
+
 // Productos agotados.
 function productosAgotados(req,res){
-    Producto.find({ stock: 0}, (err,ProductosEncontrados)=>{
+    if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje:'Inicia Sesion Como Cliente Para Verificar si Hay productos Agotados'})
+
+    Producto.find({ stock: 0}, (err,ProductosAgotados)=>{
         if(err){
           return  res.status(500).send({mensaje : 'Error en la peticion'});
-        } else if (ProductosEncontrados){
+        } else if (ProductosAgotados){
             
-            if(ProductosEncontrados.length > 0){
-                return res.send({mensaje:'Productos agotados','productos': ProductosEncontrados});
+            if(ProductosAgotados.length > 0){
+                return res.send({ProductosAgotados});
             } else {
                 res.send({mensaje : 'Por el momento no hay productos agotados.'});
             }
@@ -183,6 +194,8 @@ function productosAgotados(req,res){
 
 // Productos Más vendidos
 function productosMasDemanda(req,res){
+    if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje:'Inicia Sesion Como Cliente Para ver Productos Mas Vendidos'})
+
 
     Producto.find({ventas: {$gt: 0}},(err,ProductosMasVendidos)=>{
         if(err){
@@ -197,8 +210,6 @@ function productosMasDemanda(req,res){
 
 
 
-
-
 module.exports={
 registrarProducto,
 listaProductos,
@@ -208,6 +219,6 @@ eliminarProducto,
 listaNombreProducto,
 productosAgotados,
 productosMasDemanda,
-listaNombreCategorias
+listaCatalogoCategoria
 
 }
