@@ -13,7 +13,7 @@ stock: Number,
 precio: Number,
 
 }],
-facturas:[{type: Schema.Types.ObjectId, re: 'Factuas'}]
+facturas:[{type: Schema.Types.ObjectId, re: 'Factura'}]
 
 });
 
