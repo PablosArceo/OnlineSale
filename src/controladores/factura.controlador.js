@@ -9,7 +9,7 @@ const Factura = require('../modelos/factura.model');
                   //=== Funciones De Administrador ===\\ 
 
 
-// Crear Factura
+// Crear Factura orientada a un cliente
 function crearFactura(req, res){
     var idUser = req.params.idUser;
     var factura = new Factura();
@@ -77,39 +77,62 @@ function crearFactura(req, res){
                                                                                 }
                                                                             });
                                                                     }
-                                                                }else{
-                                                                    return res.send({mensaje:'Algun producto no se encuentra o ha sido eliminado.'});
+                                                                }else{ return res.send({mensaje:'Algun producto no se encuentra o ha sido eliminado.'});
                                                                 }
                                                             });
-                                                        }else{
-                                                            return res.status(404).send({mensaje:'Producto no encontrado.'});
+                                                        }else{  return res.status(404).send({mensaje:'Producto no encontrado.'});
                                                         }
                                                     });
                                                     
                                                 });
-                                        }else{
-                                            res.send({mensaje:'Error en la creación de la factura'});
+                                        }else{ return res.send({mensaje:'Error en la creación de la factura'});
                                         }
                                     });
                                 }
-                            }else{
-                                return res.send({mensaje:'La cantidad que desea supera las existencias en stock'});
+                            }else{  return res.send({mensaje:'La cantidad que desea supera las existencias en stock'});
                             }
-                        }else{
-                            return res.send({mensaje:'Algun producto no se encuentra o ha sido eliminado.'});
+                        }else{ return res.send({mensaje:'Algun producto no se encuentra o ha sido eliminado.'});
                         }
                     });
                 });
-            }else{
-                res.send({mensaje:'Cobro Ya Realizado, añada mas productos a su carrito'});
+            }else{  res.send({mensaje:'Cobro Ya Realizado, añada mas productos a su carrito'});
             }
 
-        }else{
-            res.status(404).send({mensaje:'Usuario no encontrado.'});
+        }else{  res.status(404).send({mensaje:'Usuario no encontrado.'});
         }
     });
 }
 
+function listaFacturas(req, res){
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden listar Facturas'})
+
+    Factura.find({}, (err, facturas)=>{
+        if(err){ return  res.status(500).send({mensaje: 'Error en la peticion'});
+        }else if(facturas){
+            if(facturas.length>0){ return res.send({facturas});
+            }else{ return res.send({mensaje:'No se encontraron facturas.'});
+            }
+        }else{ return res.status(404).send({mensaje: 'No se encontraron facturas.'});
+        }
+	});
+}
+
+function listaFacturaProductos(req,res){
+    let idFactura = req.params.idFactura;
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden listar Facturas'})
+
+
+    Factura.findById(idFactura, (err, FacturasEncontrada)=>{
+        if(err){ return res.status(500).send({mensaje : 'Error en la peticion'});
+        } else if (FacturasEncontrada){ return res.send({mensaje:'Productos de la Factura','productos': FacturasEncontrada.productos});
+        } else { return res.status(404).send({ mensaje : 'No se ha encontrado la factura.'});
+        }
+    })
+}
+
+
 module.exports = {
-    crearFactura
+    crearFactura,
+    listaFacturas,
+    listaFacturaProductos
 }

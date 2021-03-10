@@ -13,7 +13,7 @@ mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/ProyectoFinal',{ useNewUrlParser: true, useUnifiedTopology: true }).then(()=>{
    
     
-    var user1 = 'Admin';
+    var user1 = 'ADMIN';
     var password = '123456';
     var rol = 'ROL_ADMIN';
    
