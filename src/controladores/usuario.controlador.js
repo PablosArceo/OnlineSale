@@ -5,8 +5,7 @@ const jwt = require('../servicios/jwt');
 const Usuario = require('../modelos/usuario.model');
 const Producto = require('../modelos/producto.model');
 const Factura = require ('../modelos/factura.model');
-const { param } = require('../rutas/usuario.rutas');
-const { collection } = require('../modelos/producto.model');
+
 
 
 // Login General
@@ -19,11 +18,11 @@ function login(req, res){
                 
             ]},(err, usuarioEncontrado)=>{
                 if(err){
-                    res.status(500).send({message:'Error en la peticion'});
+                    res.status(500).send({mensaje:'Error en la peticion'});
                 }else if(usuarioEncontrado){
                     bcrypt.compare(params.password, usuarioEncontrado.password, (err, passwordCorrecta)=>{
                         if(err){
-                            res.status(500).send({message:'Error en la peticion de Usuario'});
+                            res.status(500).send({mensaje:'Error en la peticion de Usuario'});
                         }else if(passwordCorrecta){
                                 if(usuarioEncontrado.rol == 'ROL_CLIENTE'){
                                     if(params.obtenerToken){
@@ -40,18 +39,18 @@ function login(req, res){
                                     }
                                 }
                         }else{
-                            res.send({message:'El usuario no se ha podedido identificar.'});
+                            res.send({mensaje:'El usuario no se ha podedido identificar.'});
                         }
                     });
                 }else{
-                    res.send({message:'Datos de usuario incorrectos.'});
+                    res.send({mensaje:'Datos de usuario incorrectos.'});
                 }
             }).populate('facturas');
         }else{
-            res.send({message:'Ingresa tu contraseña.'});
+            res.send({mensaje:'Ingresa tu contraseña.'});
         }
     }else{
-        res.send({message:'Ingresa tu user.'});
+        res.send({mensaje:'Ingresa tu user.'});
     }
 }
 
@@ -167,14 +166,14 @@ function login(req, res){
                                 res.send({mensaje:'Error la cantidad supera la existencia de los productos.'});
                             }
                     }else{
-                        res.status(404).send({message:'Producto inexistente.'});
+                        res.status(404).send({mensaje:'Producto inexistente.'});
                     }
                 });
 
             }
         });
        }else{
-        res.send({message:'Ingresa la cantidad del producto que desea añadir a su carrito.'});
+        res.send({mensaje:'Ingresa la cantidad del producto que desea añadir a su carrito.'});
        }
    }
 
@@ -244,8 +243,8 @@ function login(req, res){
 
         Usuario.findOneAndUpdate({'_id':idUser, 'carrito._id':idProducto}, {$pull:{carrito:{_id:idProducto}}}, {new:true},(err, UsuarioActualizado)=>{
             if(err){  return  res.status(500).send({mensaje:'Error en la petición'});
-            }else if(UsuarioActualizado){ return res.send({Carrito:UsuarioActualizado.carrito});
-            }else{ return res.status(404).send({message:'No se encontraron coincidencias.'});
+            }else if(UsuarioActualizado){ return res.send({ProductoEliminadoDeCarrito:UsuarioActualizado.carrito});
+            }else{ return res.status(404).send({mensaje:'No se encontraron coincidencias.'});
             }
         });
     
@@ -258,7 +257,7 @@ function login(req, res){
     function listaFacturaId(req, res){
     var idUser = req.params.idUser;
 
-    if (req.user.rol != 'CLIENTE') return res.status(500).send({mensaje: 'Funcion disponible para clientes'})
+    if (req.user.rol != 'ROL_CLIENTE') return res.status(500).send({mensaje: 'Funcion disponible para clientes'})
 
 
     Usuario.findById({_id: idUser,rol:'ROL_CLIENTE'}, (err,UsuarioEncontrado)=>{

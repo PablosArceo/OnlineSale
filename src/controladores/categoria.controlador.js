@@ -1,6 +1,5 @@
 'use strict'
 const Categoria = require('../modelos/categoria.model');
-const { param } = require('../rutas/usuario.rutas'); // DUDA
 
  
 
@@ -89,30 +88,30 @@ function listaCategoriaId(req, res){
 // Eliminar Categorias
 function eliminarCategoria(req, res){
     var idCategoria = req.params.idCategoria;
-    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden lista Categorias por Id'})
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden eliminar categorias'})
 
          
     Categoria.findOne({'_id':idCategoria, nombreCategoria:'default'}, (err, categoriaEncontrada)=>{
     if(err){
     return res.status(500).send({mensaje: 'Error al encontrar categoria'});
         }else if(categoriaEncontrada){
-            res.send({message:'No puede eliminar la categoria por defecto.'});
+            res.send({mensaje:'No puede eliminar la categoria por defecto.'});
         }else{
         Categoria.findByIdAndRemove(idCategoria, (err, categoriaEliminada)=>{
             if(err){
-            res.status(500).send({message: 'Error general'});
+            res.status(500).send({mensaje: 'Error general'});
              }else if(categoriaEliminada){
              Categoria.findOneAndUpdate({nombreCategoria:'default'}, {$push:{productos:categoriaEliminada.productos}},{new:true},(err, categoriaEncontrada)=>{
                 if(err){
-                   res.status(500).send({message: 'Error general'});
+                   res.status(500).send({mensaje: 'Error general'});
                     }else if(categoriaEncontrada){
-                    res.send({message:'Categoria eliminada.', category:categoriaEliminada});
+                    res.send({categoriaEliminada:categoriaEliminada});
                     }else{
-                    res.status(404).send({message: 'Error categoria no encontrada.'});
+                    res.status(404).send({mensaje: 'Error categoria no encontrada.'});
                             }
                         });
                     }else{
-                        res.status(404).send({message: 'Categoria inexistente.'});  
+                        res.status(404).send({mensaje: 'Categoria inexistente.'});  
                     }
                 });
         }
@@ -120,7 +119,7 @@ function eliminarCategoria(req, res){
 }
 function listaNombreCategorias(req, res){
     var nombreCategoria = req.params.nombreCategoria;
-    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden eliminar Categorias'})
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden listasr Categorias por nombre'})
     Categoria.find({ 'nombreCategoria': nombreCategoria}, (err, CategoriaEncontrada) => {
         if (err) return res.status(500).send({ mensaje: "Error en peticion" });
         if (!CategoriaEncontrada) return res.status(500).send({ mensaje: "Error en la busqueda de nombre" });

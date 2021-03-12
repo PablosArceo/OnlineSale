@@ -54,8 +54,7 @@ function crearFactura(req, res){
                                         if(err){
                                             res.status(500).send({mensaje:'Error en la petición'});
                                         }else if(FacturaGuardada){
-                                            res.send({mensaje:'Factura Creada Exitosamente',
-                                                    factura:FacturaGuardada});
+                                            res.send({facturaCreada:FacturaGuardada});
                                                 UsuarioEncontrado.carrito.forEach(producto =>{
                                                     Producto.findOne({'_id':producto._id}, (err, ProductoEncontrado)=>{
                                                         if(err){
@@ -73,7 +72,6 @@ function crearFactura(req, res){
                                                                                 if(err){
                                                                                     return res.status(500).send({mensaje:'Error en la peticion'});
                                                                                 }else if(UsuarioActualizado){
-                                                                                    //       console.log('Factura Añadida a Cliente.');
                                                                                 }
                                                                             });
                                                                     }
@@ -124,7 +122,7 @@ function listaFacturaProductos(req,res){
 
     Factura.findById(idFactura, (err, FacturasEncontrada)=>{
         if(err){ return res.status(500).send({mensaje : 'Error en la peticion'});
-        } else if (FacturasEncontrada){ return res.send({mensaje:'Productos de la Factura','productos': FacturasEncontrada.productos});
+        } else if (FacturasEncontrada){ return res.send({FacturaProductos:FacturasEncontrada.productos});
         } else { return res.status(404).send({ mensaje : 'No se ha encontrado la factura.'});
         }
     })

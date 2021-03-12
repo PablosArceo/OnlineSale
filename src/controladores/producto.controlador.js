@@ -10,7 +10,7 @@ function registrarProducto(req, res){
     var producto = new Producto();
     var params = req.body;
     var idCategoria = req.params.idCategoria;
-    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden registrar Categorias'})
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden registrar Productos'})
 
     
     if(params.nombreProducto && params.stock && params.precio){
@@ -22,7 +22,7 @@ function registrarProducto(req, res){
             }else{
                 Categoria.findOne({'_id':idCategoria},(err, CategoriaEncontrada)=>{
                     if(err){
-                        res.status(500).send({message:'Error en la peticion.'});
+                        res.status(500).send({mensaje:'Error en la peticion.'});
                     }else if(CategoriaEncontrada){
 
                         if(params.stock>=0 && params.precio>0){
@@ -39,28 +39,28 @@ function registrarProducto(req, res){
                                     Categoria.findByIdAndUpdate(idCategoria,{$push:{productos:producto._id}},
                                         {new:true},(err, CategoriaActualizada)=>{
                                             if(err){
-                                                res.status(500).send({message:'Error en la peticion al guardar producto.'});
+                                                res.status(500).send({mensaje:'Error en la peticion al guardar producto.'});
                                             }else if(CategoriaActualizada){
                                                 res.send({'Producto Agregado':ProductoGuardado});
                                             }else{
-                                                res.status(404).send({message:'Producto no guardado.'});
+                                                res.status(404).send({mensaje:'Producto no guardado.'});
                                             }
                                         });
                                 }else{
-                                    res.status(404).send({message:'Producto no guardado.'});
+                                    res.status(404).send({mensaje:'Producto no guardado.'});
                                 }
                             });
                         }else{
-                            res.send({message:'El precio debe ser positivo .'});
+                            res.send({mensaje:'El precio debe ser positivo .'});
                         }
                     }else{
-                        res.status(404).send({message:'Categoria no encontrada.'});
+                        res.status(404).send({mensaje:'Categoria no encontrada.'});
                     }
                 });
             }
         });
     }else{
-        res.send({message:'Ingresa todos los datos.'});
+        res.send({mensaje:'Ingresa todos los datos.'});
     }
 
 }
@@ -68,7 +68,7 @@ function registrarProducto(req, res){
 
 // Editar Productos
 function editarProducto(req, res){
-    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden registrar Categorias'})
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden editar Categorias'})
 
     var idProducto = req.params.idProducto;
     var params = req.body;
@@ -101,7 +101,7 @@ function listaProductos(req,res) {
 function listaProductosId(req, res){
 
     var idProducto = req.params.idProducto;
-    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden listar Productos por Nombre'})
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden listar Productos por Id'})
 
     Producto.find({ '_id': idProducto}, (err, ProductoEncontrado) => {
         if (err) return res.status(500).send({ mensaje: "Error en peticion" });
@@ -115,17 +115,17 @@ function listaProductosId(req, res){
 
 // Eliminar Producto
 function eliminarProducto(req, res){
-    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Error en los permisos'})
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden eliminar productos'})
         var idProducto = req.params.idProducto;
-        Producto.findByIdAndRemove(idProducto, (err, productoBorrado)=>{
+        Producto.findByIdAndRemove(idProducto, (err, productoEliminado)=>{
         if(err){
         res.status(500).send({mensaje: 'Error en la peticion'});
-        }else if(productoBorrado){
+        }else if(productoEliminado){
             Categoria.findOneAndUpdate({'productos':idProducto}, {$pull:{productos:idProducto}},{new:true},(err, categoriaActualizada)=>{
             if(err){
             res.status(500).send({mensaje: 'Error en la peticion'});
     }else if(categoriaActualizada){
-    res.send({ProductoBorrado:productoBorrado});
+    res.send({productoEliminado:productoEliminado});
     }else{
     res.send({mensaje:'No se elimino el producto.'});
     }
