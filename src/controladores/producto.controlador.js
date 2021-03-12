@@ -60,7 +60,10 @@ function registrarProducto(req, res){
             }
         });
     }else{
-        res.send({mensaje:'Ingresa todos los datos.'});
+        res.send({mensaje
+            
+            
+            :'Ingresa todos los datos.'});
     }
 
 }
