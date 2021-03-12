@@ -115,30 +115,24 @@ function listaProductosId(req, res){
 
 // Eliminar Producto
 function eliminarProducto(req, res){
-    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden eliminar Categorias'})
-
-    var id = req.params.id;
-
-    Producto.findByIdAndRemove(id, (err, ProductoEliminado)=>{
-        
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Error en los permisos'})
+        var idProducto = req.params.idProducto;
+        Producto.findByIdAndRemove(idProducto, (err, productoBorrado)=>{
         if(err){
-            
+        res.status(500).send({mensaje: 'Error en la peticion'});
+        }else if(productoBorrado){
+            Categoria.findOneAndUpdate({'productos':idProducto}, {$pull:{productos:idProducto}},{new:true},(err, categoriaActualizada)=>{
+            if(err){
             res.status(500).send({mensaje: 'Error en la peticion'});
-        }else if(ProductoEliminado){
-            Categoria.findOneAndUpdate({'productos':id}, {$pull:{productos:id}},{new:true},(err, CategoriaActualizada)=>{
-                if(err){
-                    res.status(500).send({mensaje: 'Error en la peticion'});
-                }else if(CategoriaActualizada){
-                    res.send({mensaje:'Producto eliminado.', producto:ProductoEliminado});
-                
-                }else{
-                    res.send({mensaje:'No se elimino el producto.'});
-                }
-            });
-        }else{
-            res.status(404).send({mensaje: 'Producto Ya eliminado.'});  
-            
-        }
+    }else if(categoriaActualizada){
+    res.send({ProductoBorrado:productoBorrado});
+    }else{
+    res.send({mensaje:'No se elimino el producto.'});
+    }
+    });
+    }else{
+    res.status(404).send({mensaje: 'Producto Ya eliminado.'});  
+    }
     });
 }
 // Productos Más vendidos
@@ -170,7 +164,16 @@ function AgotadoProducto(req,res){
     })
 }
 
+function listaNombreProductoAd(req, res){
+    var nombreProducto = req.params.nombreProducto;
+    if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Inicia Sesion como Admin para buscar productos por nombre'})
 
+    Producto.find({ 'nombreProducto': nombreProducto}, (err, ProductoEncontrado) => {
+        if (err) return res.status(500).send({ mensaje: "Error en peticion" });
+        if (!ProductoEncontrado) return res.status(500).send({ mensaje: "Error en la busqueda de nombre" });
+        return res.status(200).send({ ProductoEncontrado });
+    })
+}
 
 
 
@@ -249,6 +252,7 @@ listaProductos,
 listaProductosId,
 editarProducto,
 eliminarProducto,
+listaNombreProductoAd,
 listaNombreProducto,
 productosMasVendidos,
 AgotadoProducto,
