@@ -89,6 +89,8 @@ function editarProducto(req, res){
 
 
 
+
+
 // Lista los Productos
 function listaProductos(req,res) {
     if (req.user.rol != 'ROL_ADMIN') return res.status(500).send({mensaje:'Solo Administradores pueden listar Productos'})
